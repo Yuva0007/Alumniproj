@@ -1,0 +1,227 @@
+[
+  {
+    "step": "Read and analyze backend dependencies from pom.xml",
+    "sub_steps": [
+      "Open /home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/pom.xml.",
+      "Review dependencies: spring-boot-starter-data-jpa, spring-boot-starter-web, mysql-connector-java, lombok, spring-boot-devtools, spring-boot-starter-validation.",
+      "Confirm no H2 database dependency is present.",
+      "Check the Java version and other configurations for compatibility."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/pom.xml"
+    ],
+    "description": "Ensure the backend has required dependencies for JPA, web, validation, Lombok, and MySQL to support upcoming entity and repository implementations."
+  },
+  {
+    "step": "Implement Alumni Entity class with required attributes",
+    "sub_steps": [
+      "Create Alumni entity annotated with jakarta.persistence.Entity.",
+      "Add fields: id (Long, @Id, @GeneratedValue), name (String, required), graduationYear (Integer, required), currentCompany (String, required), jobTitle (String, required), skills (String, required), availableForMentorship (Boolean), email (String, required), createdAt (LocalDateTime, set default on persist).",
+      "Add validation annotations for required fields (javax.validation.constraints).",
+      "Use Lombok annotations (@Data, @NoArgsConstructor, @AllArgsConstructor, @Builder) for boilerplate.",
+      "Configure createdAt to auto-set before persisting."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/main/java/com/examly/springapp/model/Alumni.java"
+    ],
+    "files_to_edit": [],
+    "description": "Defines the Alumni data model reflecting all required fields and validation constraints for JPA/Hibernate."
+  },
+  {
+    "step": "Implement AlumniRepository interface with custom search query methods",
+    "sub_steps": [
+      "Extend jakarta.data.jpa.repository.JpaRepository<Alumni, Long>.",
+      "Add custom query methods: findByNameContainingIgnoreCase, findByCurrentCompanyContainingIgnoreCase, findBySkillsContainingIgnoreCase, findByGraduationYearBetween, findByAvailableForMentorship.",
+      "Add @Repository annotation if required."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/main/java/com/examly/springapp/repository/AlumniRepository.java"
+    ],
+    "files_to_edit": [],
+    "description": "Provides all data access methods, supporting custom queries required for search and filtering."
+  },
+  {
+    "step": "Implement AlumniService class handling business logic for alumni operations",
+    "sub_steps": [
+      "Create AlumniService class annotated with @Service.",
+      "Inject AlumniRepository.",
+      "Implement methods: getAllAlumni, getAlumniById, createAlumni, searchAlumni (with support for all optional filters).",
+      "Ensure createAlumni validates fields; for search, support combined filtering for query, graduation year, mentorship availability.",
+      "Handle entity-not-found scenarios with custom exceptions/messages."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/main/java/com/examly/springapp/service/AlumniService.java"
+    ],
+    "files_to_edit": [],
+    "description": "Implements core business logic, validation, and search/filtering features for alumni information."
+  },
+  {
+    "step": "Implement AlumniController REST controller with required endpoints",
+    "sub_steps": [
+      "Create AlumniController class annotated with @RestController and @RequestMapping(\"/api/alumni\").",
+      "Implement endpoints:",
+      "GET /api/alumni \u2192 returns all alumni.",
+      "GET /api/alumni/{id} \u2192 return alumni by ID; return 404 with {\"message\": \"Alumni with ID {id} not found\"} if absent.",
+      "POST /api/alumni \u2192 create alumni; validate input and return errors in {\"message\": \"Field {fieldName} is required\"} format.",
+      "GET /api/alumni/search \u2192 accept query, startYear, endYear, mentorshipAvailable as params and return matching alumni.",
+      "Add exception handlers for validation and entity not found.",
+      "Add @CrossOrigin annotation to allow requests from React frontend."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/main/java/com/examly/springapp/controller/AlumniController.java"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/main/resources/application.properties"
+    ],
+    "description": "Exposes REST endpoints that serve alumni data, support searching and creation, while implementing all contract and error scenarios as per requirements."
+  },
+  {
+    "step": "Implement backend JUnit test cases for service and controller",
+    "sub_steps": [
+      "Implement testGetAllAlumni: Mock AlumniRepository, ensure service returns 3 expected alumni objects.",
+      "Implement testCreateAlumni: Validate creation logic, repository save mock, check returned ID, fields, createdAt.",
+      "Implement testSearchAlumni: Mock different repository searches, test filtering by name, company, skills, years, mentorship; verify method calls, expected returned data.",
+      "Implement testAlumniControllerEndpoints: Integrate with MockMvc to test GET, POST, and search endpoints; check status codes, response body (including validation and not found cases).",
+      "Ensure no manual cleanup; use test isolation.",
+      "Reference all main, test, and configuration files.",
+      "Use Mockito for repository/service mocks."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/test/java/com/examly/springapp/service/AlumniServiceTest.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/springapp/src/test/java/com/examly/springapp/controller/AlumniControllerTest.java"
+    ],
+    "files_to_edit": [],
+    "description": "Tests all backend functionalities with both unit and integration style tests for maximum coverage and as per specified test case requirements."
+  },
+  {
+    "step": "Compile and run backend (Spring Boot) tests",
+    "sub_steps": [
+      "Run 'mvn clean compile -q -Dspring.main.banner-mode=off' to compile.",
+      "Run 'mvn test -q -Dspring.main.banner-mode=off' to execute all backend unit and integration tests."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [],
+    "description": "Verifies backend code compiles and passes all the required JUnit tests."
+  },
+  {
+    "step": "Read and analyze frontend dependencies from package.json",
+    "sub_steps": [
+      "Open /home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/package.json.",
+      "Verify React version, React Testing Library, Jest, and other dependencies.",
+      "Confirm directory structure: src/components for components and tests.",
+      "Make note of provided styling in App.css for reuse."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/package.json"
+    ],
+    "description": "Gets the frontend context and ensures correct versioning/dependency support for new component creation and test integration."
+  },
+  {
+    "step": "Implement AlumniProfile component (React) with badge, connect button, message display",
+    "sub_steps": [
+      "Create AlumniProfile.js in src/components.",
+      "Props: alumniData (object).",
+      "Display: name, graduation year, current company, job title, skills as a list.",
+      "Show 'Available for Mentorship' badge if availableForMentorship is true.",
+      "Add a Connect button; on click, display 'Connection request sent to [alumni name]'.",
+      "Ensure container and badge use specified styling requirements.",
+      "Use semantic HTML, ARIA, and CSS variables."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/components/AlumniProfile.js"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/App.css"
+    ],
+    "description": "Builds reusable alumni profile card with required interactivity and cues; supports test cases for rendering and connect behavior."
+  },
+  {
+    "step": "Implement AlumniSearch component (React) with search input and filters",
+    "sub_steps": [
+      "Create AlumniSearch.js in src/components.",
+      "State: search text, graduationYear, mentorshipAvailable.",
+      "Controlled input for search with placeholder 'Search alumni by name, company, or skills'.",
+      "Dropdown for graduation year: All, 2020-2023, 2015-2019, 2010-2014, Before 2010.",
+      "Checkbox for available for mentorship.",
+      "On any change, call onSearch prop with parameters {query, startYear, endYear, mentorshipAvailable}.",
+      "Use CSS for layout and accessibility.",
+      "Apply consistent, accessible filter controls."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/components/AlumniSearch.js"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/App.css"
+    ],
+    "description": "Allows users to filter and search alumni; manages local state and communicates search changes to parent. Directly supports state/filter test cases."
+  },
+  {
+    "step": "Implement AlumniList component (React) to display profile list with pagination",
+    "sub_steps": [
+      "Create AlumniList.js in src/components.",
+      "Props: alumniList (array).",
+      "Render AlumniProfile for each item in alumniList.",
+      "If list is empty, show 'No alumni found matching your search criteria' (centered, styled).",
+      "Show pagination controls if list length > 5; implement simple page state and handler.",
+      "Ensure accessibility and consistent styling."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/components/AlumniList.js"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/App.css"
+    ],
+    "description": "Displays paginated alumni profiles and handles edge/empty states, supporting key test cases for list rendering and pagination."
+  },
+  {
+    "step": "Integrate components and backend API in main App.js",
+    "sub_steps": [
+      "Update App.js to import AlumniSearch, AlumniList.",
+      "Manage alumni list state; initially fetch all alumni from GET /api/alumni.",
+      "On search/filter change from AlumniSearch, fetch data from GET /api/alumni/search with correct params.",
+      "Pass alumniList to AlumniList.",
+      "Handle loading/error states for network calls and show simple feedback.",
+      "API calls to http://localhost:8080; use fetch or axios as available.",
+      "Ensure all CORS and error scenarios are handled gracefully."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/App.js"
+    ],
+    "description": "Assembles the full frontend experience, manages API data flow, and wires together implemented components. Ensures app loads alumni and responds to searches as described."
+  },
+  {
+    "step": "Implement React (Jest) test cases for all components",
+    "sub_steps": [
+      "For AlumniProfile.test.js: Test that correct profile details render from props; verify badge appears if availableForMentorship is true (testAlumniProfileRendering). Test Connect button shows the message on click (testConnectButtonFunctionality).",
+      "For AlumniSearch.test.js: Render with a mock onSearch; simulate type, dropdown, checkbox, and assert correct onSearch call (testAlumniSearchComponentState).",
+      "For AlumniList.test.js: Render with 3 alumni objects (verify 3 AlumniProfile render), with 0 (show empty state), and with 6 (show pagination controls) (testAlumniListRendering).",
+      "Use React Testing Library; set up necessary mocks of props and interactions.",
+      "No manual cleanup(); use RTL auto-cleanup.",
+      "Reference the related component files for each test.",
+      "Add 'data-testid' attributes where needed for test selection."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/components/AlumniProfile.test.js",
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/components/AlumniSearch.test.js",
+      "/home/coder/project/workspace/question_generation_service/solutions/b84114ae-07cd-4fda-9704-9398ad7f8110/reactapp/src/components/AlumniList.test.js"
+    ],
+    "files_to_edit": [],
+    "description": "Implements Jest/RTL test cases for all required frontend user stories and prop scenarios, matching described test cases exactly for coverage and interaction verification."
+  },
+  {
+    "step": "Build, lint, and test React application (frontend)",
+    "sub_steps": [
+      "Run 'npm install' in the reactapp directory.",
+      "Run 'npm run build' to verify component compilation.",
+      "Run 'npx eslint src/ --fix' for code style and errors.",
+      "Run 'npm run test:ci' to execute all Jest tests. Do not use npm test or --coverage.",
+      "Ensure all steps complete without errors."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [],
+    "description": "Finalizes the frontend build ensuring code correctness, style, and passing tests for all React components."
+  }
+]
